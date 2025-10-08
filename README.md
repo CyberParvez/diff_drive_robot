@@ -1,10 +1,10 @@
-<<<<<<< HEAD
-# diff_drive_robot
-A ROS 2 simulation package for differential drive robots using ROS 2 Jazzy and Gazebo Harmonic.
-=======
 # Diff Drive Robot Simulation
 
 A ROS 2 simulation package for differential drive robots using ROS 2 Jazzy and Gazebo Harmonic.
+
+Lastest update: Mapping
+
+**Package is still under development**
 
 ## Features
 
@@ -13,6 +13,7 @@ A ROS 2 simulation package for differential drive robots using ROS 2 Jazzy and G
 - Tele-operation control (keyboard and joystick)
 - RViz2 visualization
 - Modular URDF with xacro
+- Mapping using cartographer
 
 ## Requirements
 
@@ -22,8 +23,6 @@ A ROS 2 simulation package for differential drive robots using ROS 2 Jazzy and G
 
 ## Installation
 
-### Install ROS 2 Packages
-
 ```bash
 sudo apt install -y \
     ros-jazzy-ros-gz \
@@ -31,40 +30,37 @@ sudo apt install -y \
     ros-jazzy-joint-state-publisher \
     ros-jazzy-xacro \
     ros-jazzy-teleop-twist-keyboard \
-    ros-jazzy-teleop-twist-joy
+    ros-jazzy-teleop-twist-joy \
     ros-jazzy-cartographer \
 ```
 
-## Install
-
-To use this package please download all of the necessary dependencies first and then follow these steps
+## Setup
 
 ```bash
 mkdir -p ros2_ws/src
 cd ros2_ws/src
-git clone https://github.com/adoodevv/diff_drive_robot.git
+git clone https://github.com/CyberParvez/diff_drive_robot.git
 cd ..
 colcon build --packages-select diff_drive_robot --symlink-install
 ```
 
-### Launch Gazebo simulation together with Rviz
+## Functionalities
 
-After sourcing ROS and this package we can launch the 2-wheeled differential drive robot simulation with the following command:
+### Launch Robot
 
 ```bash
 source install/setup.bash
 ros2 launch diff_drive_robot robot.launch.py 
 ```
 
-### Controlling the robot
-
-Currently, only keyboard control works. Run this in another terminal:
+### Robot Control
 
 ```bash
 ros2 run teleop_twist_keyboard teleop_twist_keyboard 
 ```
 
-## TODO
+### Create Map
 
-Package is still being worked on, though the core funtionality is pretty much done, I will be adding some more sensors and functionalities soon.
->>>>>>> 9ee3866 (Create)
+```bash
+ros2 launch diff_drive_robot mapping.launch.py
+```

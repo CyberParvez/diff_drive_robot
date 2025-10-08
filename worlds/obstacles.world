@@ -85,14 +85,14 @@
         <collision name='collision'>
           <geometry>
             <box>
-              <size>15 0.2 1</size>
+              <size>10 0.2 1</size>
             </box>
           </geometry>
         </collision>
         <visual name='visual'>
           <geometry>
             <box>
-              <size>15 0.2 1</size>
+              <size>10 0.2 1</size>
             </box>
           </geometry>
           <material>
@@ -101,7 +101,7 @@
             <specular>0.1 0.1 0.1 1</specular>
           </material>
         </visual>
-        <pose>0 7.5 0.5 0 0 0</pose>
+        <pose>0 5 0.5 0 0 0</pose>
       </link>
     </model>
 
@@ -112,14 +112,14 @@
         <collision name='collision'>
           <geometry>
             <box>
-              <size>15 0.2 1</size>
+              <size>10 0.2 1</size>
             </box>
           </geometry>
         </collision>
         <visual name='visual'>
           <geometry>
             <box>
-              <size>15 0.2 1</size>
+              <size>10 0.2 1</size>
             </box>
           </geometry>
           <material>
@@ -128,7 +128,7 @@
             <specular>0.1 0.1 0.1 1</specular>
           </material>
         </visual>
-        <pose>0 -7.5 0.5 0 0 0</pose>
+        <pose>0 -5 0.5 0 0 0</pose>
       </link>
     </model>
 
@@ -139,14 +139,14 @@
         <collision name='collision'>
           <geometry>
             <box>
-              <size>0.2 15 1</size>
+              <size>0.2 10 1</size>
             </box>
           </geometry>
         </collision>
         <visual name='visual'>
           <geometry>
             <box>
-              <size>0.2 15 1</size>
+              <size>0.2 10 1</size>
             </box>
           </geometry>
           <material>
@@ -155,7 +155,7 @@
             <specular>0.1 0.1 0.1 1</specular>
           </material>
         </visual>
-        <pose>7.5 0 0.5 0 0 0</pose>
+        <pose>5 0 0.5 0 0 0</pose>
       </link>
     </model>
 
@@ -166,14 +166,14 @@
         <collision name='collision'>
           <geometry>
             <box>
-              <size>0.2 15 1</size>
+              <size>0.2 10 1</size>
             </box>
           </geometry>
         </collision>
         <visual name='visual'>
           <geometry>
             <box>
-              <size>0.2 15 1</size>
+              <size>0.2 10 1</size>
             </box>
           </geometry>
           <material>
@@ -182,7 +182,7 @@
             <specular>0.1 0.1 0.1 1</specular>
           </material>
         </visual>
-        <pose>-7.5 0 0.5 0 0 0</pose>
+        <pose>-5 0 0.5 0 0 0</pose>
       </link>
     </model>
 
