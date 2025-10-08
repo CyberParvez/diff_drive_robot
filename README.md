@@ -1,4 +1,4 @@
-# Diff Drive Robot Simulation
+# Diff Drive Robot Simulation - Author: Mohamed Parvez Aslam
 
 A ROS 2 simulation package for differential drive robots using ROS 2 Jazzy and Gazebo Harmonic.
 
@@ -64,3 +64,7 @@ ros2 run teleop_twist_keyboard teleop_twist_keyboard
 ```bash
 ros2 launch diff_drive_robot mapping.launch.py
 ```
+
+## Demo
+
+https://github.com/user-attachments/assets/14afa4a4-5c55-4e89-8487-5f4ad70720a1
