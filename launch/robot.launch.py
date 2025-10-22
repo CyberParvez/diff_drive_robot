@@ -1,41 +1,23 @@
 import os
-from launch_ros.actions import Node
 from launch import LaunchDescription
+from launch.actions import IncludeLaunchDescription, DeclareLaunchArgument
 from launch.conditions import IfCondition
-from ament_index_python.packages import get_package_share_directory
-from launch.substitutions import LaunchConfiguration, PythonExpression
 from launch.launch_description_sources import PythonLaunchDescriptionSource
-from launch.actions import IncludeLaunchDescription, DeclareLaunchArgument, GroupAction
+from launch_ros.actions import Node
+from ament_index_python.packages import get_package_share_directory
+from launch.substitutions import LaunchConfiguration
 
 def generate_launch_description():
+    pkg = get_package_share_directory('diff_drive_robot')
 
-    # Package name
-    package_name='diff_drive_robot'
-
-    # Launch configurations
     world = LaunchConfiguration('world')
     rviz = LaunchConfiguration('rviz')
 
-    # Path to default world 
-    world_path = os.path.join(get_package_share_directory(package_name),'worlds', 'obstacles.world')
+    world_path = os.path.join(pkg, 'worlds', 'obstacles.world')
+    declare_world = DeclareLaunchArgument('world', default_value=world_path)
+    declare_rviz = DeclareLaunchArgument('rviz', default_value='True')
 
-    # Launch Arguments
-    declare_world = DeclareLaunchArgument(
-        name='world', default_value=world_path,
-        description='Full path to the world model file to load')
-    
-    declare_rviz = DeclareLaunchArgument(
-        name='rviz', default_value='True',
-        description='Opens rviz is set to True')
-
-    # Launch Robot State Publisher Node
-    urdf_path = os.path.join(get_package_share_directory(package_name),'urdf','robot.urdf')
-    rsp = IncludeLaunchDescription(
-                PythonLaunchDescriptionSource([os.path.join(
-                    get_package_share_directory(package_name),'launch','rsp.launch.py'
-                )]), launch_arguments={'use_sim_time': 'true', 'urdf': urdf_path}.items()
-    )
-
+    # Gazebo sim
     # Launch the gazebo server to initialize the simulation
     gazebo_server = IncludeLaunchDescription(
                     PythonLaunchDescriptionSource([os.path.join(
@@ -49,50 +31,53 @@ def generate_launch_description():
                         get_package_share_directory('ros_gz_sim'), 'launch', 'gz_sim.launch.py'
                     )]), launch_arguments={'gz_args': '-g '}.items()
     )
-
-    # Run the spawner node from the gazebo_ros package. 
-    spawn_diff_bot = Node(
-                        package='ros_gz_sim', 
-                        executable='create',
-                        arguments=['-topic', 'robot_description',
-                                   '-name', 'diff_bot',
-                                   '-z', '0.2'],
-                        output='screen'
+    
+    # Spawn Robot 1
+    robot1 = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource([os.path.join(pkg, 'launch', 'rsp.launch.py')]),
+        launch_arguments={
+            'prefix': 'robot_1',
+            'x': '0',
+            'y': '0'
+        }.items()
     )
 
-    # Launch the Gazebo-ROS bridge
-    bridge_params = os.path.join(get_package_share_directory(package_name),'config','gz_bridge.yaml')
+    # Spawn Robot 2
+    robot2 = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource([os.path.join(pkg, 'launch', 'rsp.launch.py')]),
+        launch_arguments={
+            'prefix': 'robot_2',
+            'x': '1',
+            'y': '0'
+        }.items()
+    )
+
+    # Gazebo-ROS bridge
+    bridge_params = os.path.join(pkg, 'config', 'gz_bridge.yaml')
     ros_gz_bridge = Node(
         package="ros_gz_bridge",
         executable="parameter_bridge",
         arguments=[
-            '--ros-args',
-            '-p',
-            f'config_file:={bridge_params}',]
+            '--ros-args', '-p', f'config_file:={bridge_params}'
+        ]
     )
-    
-    # Launch Rviz with diff bot rviz file
-    rviz_config_file = os.path.join(get_package_share_directory(package_name), 'rviz', 'bot.rviz')
-    rviz2 = GroupAction(
+
+    rviz_node= Node(
         condition=IfCondition(rviz),
-        actions=[Node(
-                    package='rviz2',
-                    executable='rviz2',
-                    arguments=['-d', rviz_config_file],
-                    output='screen',)]
+        package='rviz2',
+        executable='rviz2',
+        name='rviz2',
+        arguments=['-d', os.path.join(pkg, 'rviz', 'bot.rviz')],
+        output='screen'
     )
 
-    # Launch them all!
     return LaunchDescription([
-        # Declare launch arguments
-        declare_rviz,
         declare_world,
-
-        # Launch the nodes
-        rviz2,
-        rsp,
+        declare_rviz,
         gazebo_server,
         gazebo_client,
-        ros_gz_bridge,
-        spawn_diff_bot
+        robot1,
+        robot2,
+        rviz_node,
+        ros_gz_bridge
     ])

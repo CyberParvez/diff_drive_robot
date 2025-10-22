@@ -3,40 +3,68 @@ from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument
 from launch_ros.substitutions import FindPackageShare
 from launch.substitutions import LaunchConfiguration, PathJoinSubstitution, Command
-
+from launch_ros.parameter_descriptions import ParameterValue
 
 def generate_launch_description():
+    pkg_share = FindPackageShare("diff_drive_robot")
 
-    # Package name
-    package_name = FindPackageShare("diff_drive_robot")
-
-    # Default robot description if none is specified
-    urdf_path = PathJoinSubstitution([package_name, "urdf", "robot.urdf"])
+    # Arguments
+    prefix_arg = DeclareLaunchArgument(
+        'prefix', default_value='robot_1',
+        description='Prefix for robot instance name')
     
-    # Launch configurations
-    use_sim_time = LaunchConfiguration('use_sim_time')
+    x_arg = DeclareLaunchArgument('x', default_value='0.0')
+    y_arg = DeclareLaunchArgument('y', default_value='0.0')
+    z_arg = DeclareLaunchArgument('z', default_value='0.1')
 
-    # Declare launch arguments
-    declare_use_sim_time = DeclareLaunchArgument(
-            'use_sim_time', default_value='false',
-            description='Use sim time if true')
+    prefix = LaunchConfiguration('prefix')
+    x = LaunchConfiguration('x')
+    y = LaunchConfiguration('y')
+    z = LaunchConfiguration('z')
 
-    declare_urdf = DeclareLaunchArgument(
-            name='urdf', default_value=urdf_path,
-            description='Path to the robot description file')
+    # Proper Xacro expansion with parameters
+    robot_description = Command([
+        'xacro ', 
+        PathJoinSubstitution([
+            FindPackageShare('diff_drive_robot'),
+            'urdf',
+            'robot.xacro'
+        ]),
+        ' prefix:=', prefix
+    ])
 
-    # Create a robot state publisher 
-    robot_state_publisher = Node(
+    # Robot State Publisher node
+    rsp_node = Node(
         package='robot_state_publisher',
         executable='robot_state_publisher',
-        name='robot_state_publisher',
+        name='robot_state_publisher',  # Don't prefix this name
+        namespace=prefix,  # Use namespace instead of name prefix
         output='screen',
-        parameters=[{'use_sim_time': use_sim_time,'robot_description': Command(['xacro', ' ', urdf_path]),}],
+        parameters=[{
+            'use_sim_time': True, 
+            'robot_description': ParameterValue(robot_description, value_type=str)
+        }]
     )
 
-    # Launch!
+    # Spawn in Gazebo
+    spawn_node = Node(
+        package='ros_gz_sim',
+        executable='create',
+        arguments=[
+            '-topic', ['/', prefix, '/robot_description'],  # Use namespaced topic
+            '-name', prefix,
+            '-x', x,
+            '-y', y,
+            '-z', z
+        ],
+        output='screen'
+    )
+
     return LaunchDescription([
-        declare_urdf,
-        declare_use_sim_time,
-        robot_state_publisher
+        prefix_arg,
+        x_arg,
+        y_arg,
+        z_arg,
+        rsp_node,
+        spawn_node
     ])

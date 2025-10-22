@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="multi_robot">
+  <xacro:include filename="$(find diff_drive_robot)/urdf/robot.xacro" />
+
+  <xacro:diff_drive_robot prefix="robot_1" />
+  <xacro:diff_drive_robot prefix="robot_2" />
+</robot>

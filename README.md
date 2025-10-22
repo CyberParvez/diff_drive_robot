@@ -8,12 +8,11 @@ Lastest update: Mapping
 
 ## Features
 
-- Differential drive robot with lidar sensor
-- Gazebo Harmonic simulation
-- Tele-operation control (keyboard and joystick)
+- Differential drive robot with LiDAR and IMU sensor
+- Gazebo Harmonic Simulation
+- Tele-operation control
 - RViz2 visualization
 - Modular URDF with xacro
-- Mapping using cartographer
 
 ## Requirements
 
@@ -39,7 +38,7 @@ sudo apt install -y \
 ```bash
 mkdir -p ros2_ws/src
 cd ros2_ws/src
-git clone https://github.com/CyberParvez/diff_drive_robot.git
+git clone -b multi-robot https://github.com/CyberParvez/diff_drive_robot.git
 cd ..
 colcon build --packages-select diff_drive_robot --symlink-install
 ```
@@ -59,12 +58,7 @@ ros2 launch diff_drive_robot robot.launch.py
 ros2 run teleop_twist_keyboard teleop_twist_keyboard 
 ```
 
-### Create Map
-
-```bash
-ros2 launch diff_drive_robot mapping.launch.py
-```
-
 ## Demo
 
-https://github.com/user-attachments/assets/14afa4a4-5c55-4e89-8487-5f4ad70720a1
+![Multi Robot Gazebo Simulation](./resources/image.png)
+![Multi Robot RVIZ Visualization](./resources/image-1.png)
